@@ -2,10 +2,10 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY main.py auth.py requirements.txt /app
+COPY main.py auth.py requirements.txt /app/
 
-RUN apt-get update && \
-    apt-get upgrade && \
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
     pip install -U pip setuptools && \
     pip install -r requirements.txt
 

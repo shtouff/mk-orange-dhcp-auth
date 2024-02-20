@@ -4,7 +4,7 @@
 
 ## run
 
-Populate a `CREDENTIALS` file like this one:
+Populate a `credentials` file like this one:
 
     # user:password
     fti/xxxxx:xxxxx
