@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dhcp-auth-deployment
+  labels:
+    k8s-app: dhcp-auth
+spec:
+  selector:
+    matchLabels:
+      k8s-app: dhcp-auth
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        k8s-app: dhcp-auth
+    spec:
+      volumes:
+      - name: secrets-volume
+        secret:
+          secretName: dhcp-auth-secrets
+      containers:
+      - name: dhcp-auth
+        image: shtouff/dhcp-auth:1.0
+        env:
+        - name: CREDENTIALS
+          value: "/secrets/credentials"
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: "250m"
+          requests:
+            memory: 128Mi
+            cpu: "80m"
+        volumeMounts:
+        - name: secrets-volume
+          readOnly: true
+          mountPath: "/secrets"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dhcp-auth
+spec:
+  selector:
+    k8s-app: dhcp-auth
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  name: dhcp-auth-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: dhcp-auth.k8s.lvrdn.name
+    http:
+      paths:
+      - backend:
+          service:
+            name: dhcp-auth
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+---
+
