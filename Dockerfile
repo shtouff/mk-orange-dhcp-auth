@@ -14,3 +14,8 @@ ENTRYPOINT ["uvicorn"]
 CMD ["--host", "0.0.0.0", "main:app"]
 
 EXPOSE 8000
+
+LABEL version="1.0"
+LABEL name="dhcp-auth"
+LABEL description="This app creates DHCP auth options suitable for Orange FTTH infrastructure."
+
